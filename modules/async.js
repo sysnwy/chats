@@ -38,16 +38,16 @@ async function environment(msg) {
         }))
         .json(); // Get data with object type
       
-      const response = request ? request?.candidates?.[0]?.content?.parts?.[0]?.text.replace(/<(.*?)>/gis, '&#60;$1&#62;') : request?.error?.message; // Process the response text and display
-      
+      let response = request?.candidates?.[0]?.content?.parts?.[0]?.text ?? request?.error?.message ?? "No response"; // Process the response text and display
+        
+      // Add data with role (model) type 
+      data.history.push({
+        role: 'model',
+        parts: [{ text: response }]
+      });
+           
       return useMarkUpText(response);
     }
-    
-    // Add data with role (model) type 
-    data.history.push({
-      role: 'model',
-      parts: [{ text: response }]
-    });
   } catch (e) {
     console.error(e.stack);
     return e.message;
